@@ -1,0 +1,36 @@
+# Definition d'environnement Azure Deployment Environments (ADE)
+# Runner Terraform via le modele d'extensibilite (image conteneur personnalisee).
+# Placer ce fichier a la racine du dossier de definition, aux cotes des .tf.
+
+name: gc210-lab
+version: 1.0.0
+summary: Laboratoire AD GC210 (isole, volontairement vulnerable)
+description: >
+  Deploie le laboratoire GC210 (DC01, SRV01, WS01 optionnel) avec Azure Bastion
+  et VPN P2S optionnel. Environnement ISOLE ; ne pas exposer a Internet.
+
+# 'runner' doit referencer l'image runner Terraform enregistree dans le Dev Center
+# (voir le depot Azure/ade-extensibility-model-terraform pour la construire/pousser vers ACR).
+runner: terraform
+
+templatePath: main.tf
+
+parameters:
+  - id: scripts_base_url
+    name: URL de base des scripts d'amorcage
+    type: string
+    required: true
+  - id: enable_vpn
+    name: Deployer la passerelle VPN P2S
+    type: boolean
+    required: false
+    default: false
+  - id: deploy_ws
+    name: Deployer WS01 (foothold)
+    type: boolean
+    required: false
+    default: true
+  - id: admin_password
+    name: Mot de passe administrateur local
+    type: string
+    required: true
