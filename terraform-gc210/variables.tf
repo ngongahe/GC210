@@ -97,6 +97,7 @@ variable "deploy_ws" {
 
 variable "scripts_base_url" {
   type        = string
+  default     = "https://raw.githubusercontent.com/ngongahe/GC210/main/scripts"
   description = "URL de base (raw GitHub ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
 }
 
