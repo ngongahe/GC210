@@ -12,8 +12,8 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = azurerm_resource_group.lab.name
   address_space       = [var.addr_vnet]
   # DNS pointe vers le DC (IP statique connue) : les membres resolvent le domaine.
-  dns_servers         = [var.ip_dc]
-  tags                = var.tags
+  dns_servers = [var.ip_dc]
+  tags        = var.tags
 }
 
 resource "azurerm_subnet" "lab" {
@@ -130,7 +130,7 @@ resource "azurerm_virtual_network_gateway" "vpngw" {
   }
 
   vpn_client_configuration {
-    address_space = [var.p2s_pool]
+    address_space        = [var.p2s_pool]
     vpn_client_protocols = ["OpenVPN"]
     # Certificat racine : coller la donnee base64 (voir gen-vpn-certs.sh).
     # root_certificate {

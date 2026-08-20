@@ -69,17 +69,17 @@ variable "ip_ws" {
 # --- Tailles de VM (mutualise : DC/SRV en B4ms pour l'usage concurrent) ---
 variable "size_dc" {
   type    = string
-  default = "Standard_B4ms"
+  default = "Standard_B2ms"
 }
 
 variable "size_srv" {
   type    = string
-  default = "Standard_B4ms"
+  default = "Standard_B2ms"
 }
 
 variable "size_ws" {
   type    = string
-  default = "Standard_B2s"
+  default = "Standard_B4ms"
 }
 
 # --- Options ---
