@@ -1,5 +1,21 @@
-echo ".terraform/" >> .gitignore
-echo "*.tfstate" >> .gitignore
-echo "*.tfstate.backup" >> .gitignore
-echo ".terraform.lock.hcl" >> .gitignore
-echo "tfplan" >> .gitignore
+# Terraform - GC210
+# Etat et sauvegardes : contiennent des secrets en clair -> NE PAS versionner
+*.tfstate
+*.tfstate.*
+
+# Repertoire de travail et verrou du fournisseur
+.terraform/
+.terraform.lock.hcl
+
+# Plans (le plan de ce projet se nomme gc210plan)
+gc210plan
+tfplan
+*.tfplan
+
+# Variables (peuvent contenir des secrets)
+*.tfvars
+*.tfvars.json
+
+# Journaux de plantage
+crash.log
+crash.*.log
