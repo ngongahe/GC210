@@ -2,7 +2,7 @@
 
 variable "location" {
   type        = string
-  default     = "canadacentral"
+  default     = "canadaeast"
   description = "Region Azure."
 }
 
@@ -69,17 +69,17 @@ variable "ip_ws" {
 # --- Tailles de VM (mutualise : DC/SRV en B4ms pour l'usage concurrent) ---
 variable "size_dc" {
   type    = string
-  default = "Standard_B2ms"
+  default = "Standard_D2as_v6"
 }
 
 variable "size_srv" {
   type    = string
-  default = "Standard_B2ms"
+  default = "Standard_D2as_v6"
 }
 
 variable "size_ws" {
   type    = string
-  default = "Standard_B4ms"
+  default = "Standard_D4as_v6"
 }
 
 # --- Options ---
@@ -111,11 +111,28 @@ variable "image" {
   default = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2022-datacenter-azure-edition"
+    sku       = "2022-datacenter-azure-edition-g2"
     version   = "latest"
   }
   description = "Image Windows Server (licence incluse au tarif Azure)."
 }
+
+variable "image_client" {
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default = {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-11"
+    sku       = "win11-23h2-pro-g2" # Version Gen2 obligatoire pour la série v6
+    version   = "latest"
+  }
+  description = "Image pour le poste de travail client Windows 11."
+}
+
 
 variable "tags" {
   type = map(string)

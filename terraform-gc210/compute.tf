@@ -177,10 +177,10 @@ resource "azurerm_windows_virtual_machine" "ws" {
     storage_account_type = "StandardSSD_LRS"
   }
   source_image_reference {
-    publisher = var.image.publisher
-    offer     = var.image.offer
-    sku       = var.image.sku
-    version   = var.image.version
+    publisher = var.image_client.publisher
+    offer     = var.image_client.offer
+    sku       = var.image_client.sku
+    version   = var.image_client.version
   }
 }
 
