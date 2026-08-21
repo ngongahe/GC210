@@ -3,7 +3,10 @@
     Promotion non interactive de corp.local, puis reprise post-redemarrage
     pour executer les scripts DE01 (01, 02, audit). Laboratoire ISOLE.
 #>
-param([Parameter(Mandatory)][string]$ScriptsBaseUrl)
+param(
+  [Parameter(Mandatory)][string]$ScriptsBaseUrl,
+  [string]$DsrmPassword
+)
 $ErrorActionPreference = 'Stop'
 
 $dir = 'C:\GC210'
@@ -19,7 +22,14 @@ Add-Content "$dir\Lab-Config.ps1" "`nfunction Confirm-LabExecution { param([stri
 # 2. Promotion de la foret (non interactive, sans redemarrage immediat)
 Install-WindowsFeature AD-Domain-Services, DNS -IncludeManagementTools | Out-Null
 Import-Module ADDSDeployment
-$dsrm = ConvertTo-SecureString '__REDACTED__' -AsPlainText -Force   # fictif (laboratoire)
+# Mot de passe DSRM : fourni en argument, sinon genere aleatoirement.
+# (non versionne ; le DSRM n'est pas utilise dans ce laboratoire jetable)
+if ([string]::IsNullOrWhiteSpace($DsrmPassword)) {
+  $rngBytes = New-Object 'System.Byte[]' 18
+  [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($rngBytes)
+  $DsrmPassword = [Convert]::ToBase64String($rngBytes) + 'Aa1!'
+}
+$dsrm = ConvertTo-SecureString $DsrmPassword -AsPlainText -Force
 Install-ADDSForest -DomainName 'corp.local' -DomainNetbiosName 'CORP' `
   -InstallDns -SafeModeAdministratorPassword $dsrm -Force -NoRebootOnCompletion
 

@@ -1,5 +1,34 @@
-echo ".terraform/" >> .gitignore
-echo "*.tfstate" >> .gitignore
-echo "*.tfstate.backup" >> .gitignore
-echo ".terraform.lock.hcl" >> .gitignore
-echo "tfplan" >> .gitignore
+# .gitignore racine - depot GC210
+# Laboratoire volontairement vulnerable : aucun secret ne doit etre versionne.
+
+# === Secrets et materiel cryptographique (ne JAMAIS versionner) ===
+# Cles privees et profils VPN (gen-vpn-certs.sh)
+*.pem
+*.key
+*.pfx
+*.p12
+*.ovpn
+caCert_base64.txt
+
+# Artefacts sensibles eventuels
+*.kirbi
+*.ccache
+*.dmp
+
+# === Terraform (defense en profondeur; terraform-gc210/ a aussi son .gitignore) ===
+**/*.tfstate
+**/*.tfstate.*
+**/.terraform/
+**/.terraform.lock.hcl
+**/gc210plan
+**/tfplan
+**/*.tfplan
+**/*.tfvars
+**/*.tfvars.json
+
+# === Divers ===
+crash.log
+crash.*.log
+
+# Remarque : ce motif ignore aussi les certificats PUBLICS (*.pem) par prudence.
+# Les certificats se regenerent via gen-vpn-certs.sh ; assouplir si besoin.
