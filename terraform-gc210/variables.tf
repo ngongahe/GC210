@@ -79,7 +79,7 @@ variable "size_srv" {
 
 variable "size_ws" {
   type    = string
-  default = "Standard_D4as_v6"
+  default = "Standard_D2as_v6"
 }
 
 # --- Options ---
@@ -116,23 +116,6 @@ variable "image" {
   }
   description = "Image Windows Server (licence incluse au tarif Azure)."
 }
-
-variable "image_client" {
-  type = object({
-    publisher = string
-    offer     = string
-    sku       = string
-    version   = string
-  })
-  default = {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-11"
-    sku       = "win11-23h2-pro-g2" # Version Gen2 obligatoire pour la série v6
-    version   = "latest"
-  }
-  description = "Image pour le poste de travail client Windows 11."
-}
-
 
 variable "tags" {
   type = map(string)

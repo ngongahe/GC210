@@ -59,7 +59,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "dc" {
   virtual_machine_id    = azurerm_windows_virtual_machine.dc.id
   location              = azurerm_resource_group.lab.location
   enabled               = true
-  daily_recurrence_time = "2230"
+  daily_recurrence_time = "0100"
   timezone              = "Eastern Standard Time"
 
   notification_settings {
@@ -121,7 +121,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "srv" {
   virtual_machine_id    = azurerm_windows_virtual_machine.srv.id
   location              = azurerm_resource_group.lab.location
   enabled               = true
-  daily_recurrence_time = "2230"
+  daily_recurrence_time = "0100"
   timezone              = "Eastern Standard Time"
 
   notification_settings {
@@ -177,10 +177,10 @@ resource "azurerm_windows_virtual_machine" "ws" {
     storage_account_type = "StandardSSD_LRS"
   }
   source_image_reference {
-    publisher = var.image_client.publisher
-    offer     = var.image_client.offer
-    sku       = var.image_client.sku
-    version   = var.image_client.version
+    publisher = var.image.publisher
+    offer     = var.image.offer
+    sku       = var.image.sku
+    version   = var.image.version
   }
 }
 
@@ -189,7 +189,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "ws" {
   virtual_machine_id    = azurerm_windows_virtual_machine.ws[0].id
   location              = azurerm_resource_group.lab.location
   enabled               = true
-  daily_recurrence_time = "2230"
+  daily_recurrence_time = "0100"
   timezone              = "Eastern Standard Time"
 
   notification_settings {
