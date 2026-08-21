@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 
 $dir = 'C:\GC210'
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
-foreach ($f in 'Lab-Config.ps1','03-SRV01-Web-Fichiers.ps1','00-Prerequis.ps1') {
+foreach ($f in 'Lab-Config.ps1','03-SRV01-Web-Fichiers.ps1','00-Prerequis.ps1', 'Sysmon64.exe', 'sysmonconfig.xml' ) {
   Invoke-WebRequest -UseBasicParsing "$ScriptsBaseUrl/$f" -OutFile "$dir\$f"
 }
 Add-Content "$dir\Lab-Config.ps1" "`nfunction Confirm-LabExecution { param([string]`$n) }"

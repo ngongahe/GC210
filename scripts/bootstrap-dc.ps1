@@ -10,7 +10,7 @@ $dir = 'C:\GC210'
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 
 # 1. Telecharger les scripts DE01
-foreach ($f in 'Lab-Config.ps1','01-DC01-Comptes-AD.ps1','02-DC01-Affaiblir-LDAP.ps1','00-Prerequis.ps1') {
+foreach ($f in 'Lab-Config.ps1','01-DC01-Comptes-AD.ps1','02-DC01-Affaiblir-LDAP.ps1','00-Prerequis.ps1', 'Sysmon64.exe', 'sysmonconfig.xml') {
   Invoke-WebRequest -UseBasicParsing "$ScriptsBaseUrl/$f" -OutFile "$dir\$f"
 }
 # Neutraliser le garde-fou interactif (automatisation)
