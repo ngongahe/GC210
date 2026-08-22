@@ -24,8 +24,8 @@ $Global:Accounts = @(
     @{ Sam='p.gagnon';   Name='Patrick Gagnon';    Pwd='Automne2025!';       Desc='Mot de passe faible (password spraying)' }
     @{ Sam='svc_legacy'; Name='Service Legacy';    Pwd='Hiver2019';          Desc='DONT_REQ_PREAUTH (AS-REP roasting)' }
     @{ Sam='svc_web';    Name='Service Web IIS';   Pwd='P@ssword1';    Desc='SPN HTTP, admin local SRV01, delegation contrainte' }
-    @{ Sam='adm_files';  Name='Admin Fichiers';    Pwd='F1lesAdmin!2025';    Desc='Session periodique SRV01, droit de replication (DCSync), NON Domain Admin' }
-    @{ Sam='da_admin';   Name='Domain Admin Lab';  Pwd='D0mainAdmin!Str0ng#2025'; Desc='Cible d usurpation S4U ; ne se connecte pas a SRV01' }
+    @{ Sam='adm_files';  Name='Admin Fichiers';    Pwd='Zephyr7-Quokka!Ridge_2026';    Desc='Session periodique SRV01, droit de replication (DCSync), NON Domain Admin' }
+    @{ Sam='da_admin';   Name='Domain Admin Lab';  Pwd='Zephyr7-Quokka!Ridge_2026'; Desc='Cible d usurpation S4U ; ne se connecte pas a SRV01' }
 )
 
 # --- Cible de la delegation contrainte (ajustable) -------------------------
