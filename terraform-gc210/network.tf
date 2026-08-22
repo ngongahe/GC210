@@ -104,59 +104,6 @@ resource "azurerm_network_security_group" "lab" {
       destination_port_ranges    = ["88", "135", "389", "445", "464", "636", "3268", "3269", "3389", "5985", "5986", "49152-65535"]
     }
   }
-
-  security_rule {
-    name                       = "allow-azure-platform-dns-udp"
-    priority                   = 100
-    access                     = "Allow" # -> passer a "Deny" apres montage
-    direction                  = "Outbound"
-    protocol                   = "Udp"
-    source_address_prefix      = "*"
-    source_port_range          = "*"
-    destination_address_prefix = "AzurePlatformDNS"
-    destination_port_range     = "53"
-  }
-
-  security_rule {
-    name                       = "allow-azure-platform-dns-tcp"
-    priority                   = 101
-    direction                  = "Outbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_address_prefix      = "*"
-    source_port_range          = "*"
-    destination_address_prefix = "AzurePlatformDNS"
-    destination_port_range     = "53"
-  }
-
-  security_rule {
-    name                       = "allow-azure-services"
-    priority                   = 110
-    direction                  = "Outbound"
-    access                     = "Allow"
-    protocol                   = "*"
-    source_address_prefix      = "*"
-    source_port_range          = "*"
-    destination_address_prefix = "AzureCloud"
-    destination_port_range     = "*"
-  }
-
-  dynamic "security_rule" {
-    for_each = var.nsg_hardened && var.allow_bootstrap_internet ? [1] : []
-    content {
-      name                       = "allow-bootstrap-https"
-      priority                   = 120
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-      destination_address_prefix = "Internet"
-      destination_port_range     = "443"
-    }
-  }
-
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "lab" {
