@@ -113,6 +113,7 @@ resource "azurerm_subnet_network_security_group_association" "lab" {
 
 # --- Azure Bastion (administration) ---
 resource "azurerm_public_ip" "bastion" {
+  count               = var.enable_bastion ? 1 : 0
   name                = "pip-bastion"
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
@@ -122,6 +123,7 @@ resource "azurerm_public_ip" "bastion" {
 }
 
 resource "azurerm_bastion_host" "bastion" {
+  count               = var.enable_bastion ? 1 : 0
   name                   = "bastion-gc210"
   location               = azurerm_resource_group.lab.location
   resource_group_name    = azurerm_resource_group.lab.name
@@ -137,13 +139,13 @@ resource "azurerm_bastion_host" "bastion" {
   ip_configuration {
     name                 = "config"
     subnet_id            = azurerm_subnet.bastion.id
-    public_ip_address_id = azurerm_public_ip.bastion.id
+    public_ip_address_id = azurerm_public_ip.bastion[0].id
   }
 }
 
 resource "azurerm_role_assignment" "bastion_reader" {
   for_each             = var.bastion_admin_principal_ids
-  scope                = azurerm_bastion_host.bastion.id
+  scope                = azurerm_bastion_host.bastion[0].id
   role_definition_name = "Reader"
   principal_id         = each.value
 }

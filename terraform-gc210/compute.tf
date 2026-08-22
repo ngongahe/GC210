@@ -218,7 +218,7 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
 output "dc_private_ip" { value = var.ip_dc }
 output "srv_private_ip" { value = var.ip_srv }
 output "ws_private_ip" { value = var.deploy_ws ? var.ip_ws : "non deploye" }
-output "bastion_name" { value = azurerm_bastion_host.bastion.name }
+output "bastion_name" { value =  var.enable_bastion ? azurerm_bastion_host.bastion[0].name " "non deploye"}
 output "note" {
   value = "Administrer via Bastion. Activer nsg_hardened apres montage. Ne pas exposer a Internet."
 }

@@ -131,6 +131,11 @@ variable "bastion_admin_principal_ids" {
   description = "IDs Entra des administrateurs autorises a utiliser Bastion et a ouvrir une session admin sur les VM."
 }
 
+variable "enable_bastion" {
+  type    = bool
+  default = true
+}
+
 variable "scripts_base_url" {
   type        = string
   default     = "https://raw.githubusercontent.com/ngongahe/GC210/71e667df3433861c33c8190f7b119fb4d1430f3f/scripts"
