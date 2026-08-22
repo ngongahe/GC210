@@ -220,5 +220,5 @@ output "srv_private_ip" { value = var.ip_srv }
 output "ws_private_ip" { value = var.deploy_ws ? var.ip_ws : "non deploye" }
 output "bastion_name" { value = azurerm_bastion_host.bastion.name }
 output "note" {
-  value = "Administrer via Bastion. Activer 'deny-internet-out' apres montage. Ne pas exposer a Internet."
+  value = "Administrer via Bastion. Activer nsg_hardened apres montage. Ne pas exposer a Internet."
 }

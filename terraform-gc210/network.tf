@@ -174,7 +174,7 @@ resource "azurerm_network_security_group" "lab" {
   dynamic "security_rule" {
     for_each = var.nsg_hardened ? [] : [1]
     content {
-      name                       = "deny-internet-out"
+      name                       = "allow-internet-out"
       priority                   = 4096
       direction                  = "Outbound"
       access                     = "Allow"
