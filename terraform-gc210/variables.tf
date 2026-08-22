@@ -111,7 +111,7 @@ variable "image" {
   default = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2022-datacenter-azure-edition-g2"
+    sku       = "2022-datacenter-g2"
     version   = "latest"
   }
   description = "Image Windows Server (licence incluse au tarif Azure)."
