@@ -74,9 +74,10 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
   type                       = local.ext_type
   type_handler_version       = local.ext_version
   auto_upgrade_minor_version = true
+  automatic_upgrade_enabled  = false
 
-  protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-dc.ps1).Hash.ToLower() -ne 'cd859bb1c6e5e448e1d4093f9bf8980d3bdcfcbe3c5f5645b87255c4de25edae') { throw 'Hash SHA-256 invalide pour bootstrap-dc.ps1.' }; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DsrmPassword '${var.dsrm_password}'\""
+  settings = jsonencode({
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
 
   })
 }

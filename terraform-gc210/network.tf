@@ -207,7 +207,7 @@ resource "azurerm_bastion_host" "bastion" {
   location               = azurerm_resource_group.lab.location
   resource_group_name    = azurerm_resource_group.lab.name
   sku                    = "Standard"
-  copy_paste_enabled     = false
+  copy_paste_enabled     = true
   file_copy_enabled      = false
   ip_connect_enabled     = false
   kerberos_enabled       = true
