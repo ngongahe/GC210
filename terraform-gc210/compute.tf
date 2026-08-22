@@ -77,7 +77,7 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
   automatic_upgrade_enabled  = false
 
   settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
 
   })
 }
@@ -143,7 +143,7 @@ resource "azurerm_virtual_machine_extension" "srv_bootstrap" {
 
   # protected_settings : masque la commande et le mot de passe de jonction.
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-srv.ps1).Hash.ToLower() -ne 'fcc459445ad15caa199fcb2b351f22e238cbd03fe1541ad9e4a788052768ea84') { throw 'Hash SHA-256 invalide pour bootstrap-srv.ps1.' }; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-srv.ps1).Hash.ToLower() -ne 'fcc459445ad15caa199fcb2b351f22e238cbd03fe1541ad9e4a788052768ea84') { throw 'Hash SHA-256 invalide pour bootstrap-srv.ps1.' }; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 
@@ -210,7 +210,7 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
   depends_on                 = [azurerm_virtual_machine_extension.dc_bootstrap]
 
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-ws.ps1).Hash.ToLower() -ne 'b76fe81ad51e64ffb403f4a07921c79b9371f54771dfd482963f0b7d9f348888') { throw 'Hash SHA-256 invalide pour bootstrap-ws.ps1.' }; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-ws.ps1).Hash.ToLower() -ne 'b76fe81ad51e64ffb403f4a07921c79b9371f54771dfd482963f0b7d9f348888') { throw 'Hash SHA-256 invalide pour bootstrap-ws.ps1.' }; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 
