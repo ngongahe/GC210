@@ -133,7 +133,7 @@ variable "bastion_admin_principal_ids" {
 
 variable "enable_bastion" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "scripts_base_url" {
