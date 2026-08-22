@@ -38,8 +38,8 @@ resource "azurerm_windows_virtual_machine" "dc" {
   resource_group_name   = azurerm_resource_group.lab.name
   location              = azurerm_resource_group.lab.location
   size                  = var.size_dc
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
+  admin_username        = var.local_admin_username
+  admin_password        = var.local_admin_password
   network_interface_ids = [azurerm_network_interface.dc.id]
   tags                  = var.tags
 
@@ -75,8 +75,8 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
   type_handler_version       = local.ext_version
   auto_upgrade_minor_version = true
 
-  settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
+  protected_settings = jsonencode({
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-dc.ps1).Hash.ToLower() -ne 'e0de40b354f8334582d1029f3271bee26d7f8042d7861b29a15a59e166b00eb0') { throw 'Hash SHA-256 invalide pour bootstrap-dc.ps1.' }; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DsrmPassword '${var.dsrm_password}'\""
 
   })
 }
@@ -101,8 +101,8 @@ resource "azurerm_windows_virtual_machine" "srv" {
   resource_group_name   = azurerm_resource_group.lab.name
   location              = azurerm_resource_group.lab.location
   size                  = var.size_srv
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
+  admin_username        = var.local_admin_username
+  admin_password        = var.local_admin_password
   network_interface_ids = [azurerm_network_interface.srv.id]
   tags                  = var.tags
 
@@ -142,7 +142,7 @@ resource "azurerm_virtual_machine_extension" "srv_bootstrap" {
 
   # protected_settings : masque la commande et le mot de passe de jonction.
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainPassword '${var.admin_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-srv.ps1).Hash.ToLower() -ne 'fcc459445ad15caa199fcb2b351f22e238cbd03fe1541ad9e4a788052768ea84') { throw 'Hash SHA-256 invalide pour bootstrap-srv.ps1.' }; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 
@@ -168,8 +168,8 @@ resource "azurerm_windows_virtual_machine" "ws" {
   resource_group_name   = azurerm_resource_group.lab.name
   location              = azurerm_resource_group.lab.location
   size                  = var.size_ws
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
+  admin_username        = var.local_admin_username
+  admin_password        = var.local_admin_password
   network_interface_ids = [azurerm_network_interface.ws[0].id]
   tags                  = var.tags
 
@@ -209,7 +209,7 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
   depends_on                 = [azurerm_virtual_machine_extension.dc_bootstrap]
 
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainPassword '${var.admin_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-ws.ps1).Hash.ToLower() -ne 'b76fe81ad51e64ffb403f4a07921c79b9371f54771dfd482963f0b7d9f348888') { throw 'Hash SHA-256 invalide pour bootstrap-ws.ps1.' }; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 

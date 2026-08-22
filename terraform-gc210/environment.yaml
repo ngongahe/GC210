@@ -30,7 +30,15 @@ parameters:
     type: boolean
     required: false
     default: true
-  - id: admin_password
+  - id: local_admin_password
     name: Mot de passe administrateur local
+    type: string
+    required: true
+  - id: domain_join_password
+    name: Mot de passe du compte de jonction au domaine
+    type: string
+    required: true
+  - id: dsrm_password
+    name: Mot de passe DSRM de DC01
     type: string
     required: true

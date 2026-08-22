@@ -23,23 +23,31 @@ Héberger, à l'URL `scripts_base_url`, les fichiers `bootstrap-*.ps1` **et** le
 ## Usage local (hors Dev Center)
 
 ```bash
-export TF_VAR_admin_password='ChangezMoi_#2026!'
+export TF_VAR_local_admin_password='<mot-de-passe-admin-local>'
+export TF_VAR_domain_join_password='<mot-de-passe-jonction-domaine>'
+export TF_VAR_dsrm_password='<mot-de-passe-dsrm>'
 terraform init
 terraform apply \
   -var="scripts_base_url=https://<host>/gc210-scripts" \
+  -var="allow_bootstrap_internet=true" \
   -var="enable_vpn=false" \
   -var="deploy_ws=true"
 ```
 
-Administrer ensuite les VM via **Azure Bastion**. Après montage, passer la règle NSG
-`deny-internet-out` à `Deny` (dans `network.tf`) et `terraform apply`.
+Administrer ensuite les VM via **Azure Bastion**. Apres le telechargement des scripts, recreer un
+plan avec `allow_bootstrap_internet=false` puis l'appliquer pour fermer la sortie Internet.
+La valeur par defaut est deja `false`; l'ouverture HTTPS est uniquement temporaire et cible
+le tag de service `Internet` car NSG ne filtre pas les noms DNS GitHub.
+
+Fournir `bastion_admin_principal_ids` avec les IDs Entra des administrateurs autorises. Ils
+recoivent `Reader` sur Bastion et `Virtual Machine Administrator Login` sur le groupe de ressources.
 
 ## Réserves
 
 - **Provisioning AD** : promotion et jonctions impliquent des redémarrages, gérés ici par une
   tâche de reprise au démarrage. Ce socle convient à un **montage supervisé** ; pour une robustesse
   maximale (reprise, idempotence), envisager **Ansible/WinRM** (patron Adaz/GOAD).
-- **Secrets** : `admin_password` transite par `protected_settings` (masqué) pour la jonction ;
-  ne jamais committer de secret. Le mot de passe DSRM est fictif (laboratoire).
+- **Secrets** : les mots de passe local, de jonction et DSRM sont distincts et ne doivent jamais
+  être commités. Les secrets de jonction et DSRM transitent par `protected_settings` (masqués).
 - **Modèle mutualisé** : DC/SRV en `B4ms` pour l'usage concurrent ; surveiller la charge et le
   seuil de verrouillage du compte de spraying.

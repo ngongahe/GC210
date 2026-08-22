@@ -12,16 +12,34 @@ variable "rg_name" {
   description = "Groupe de ressources."
 }
 
-variable "admin_username" {
+variable "local_admin_username" {
   type        = string
   default     = "azadmin"
   description = "Administrateur local des VM."
 }
 
-variable "admin_password" {
+variable "local_admin_password" {
   type        = string
   sensitive   = true
-  description = "Mot de passe administrateur local fort. Fournir via TF_VAR_admin_password."
+  description = "Mot de passe administrateur local fort. Fournir via TF_VAR_local_admin_password."
+}
+
+variable "domain_join_username" {
+  type        = string
+  default     = "azadmin"
+  description = "Compte autorise a joindre les VM au domaine."
+}
+
+variable "domain_join_password" {
+  type        = string
+  sensitive   = true
+  description = "Mot de passe du compte de jonction. Fournir via TF_VAR_domain_join_password."
+}
+
+variable "dsrm_password" {
+  type        = string
+  sensitive   = true
+  description = "Mot de passe DSRM de DC01. Fournir via TF_VAR_dsrm_password."
 }
 
 # --- Adressage ---
@@ -93,6 +111,18 @@ variable "deploy_ws" {
   type        = bool
   default     = true
   description = "Deployer WS01 (poste foothold). Optionnel en modele mutualise."
+}
+
+variable "allow_bootstrap_internet" {
+  type        = bool
+  default     = false
+  description = "Autoriser temporairement HTTPS vers Internet pour telecharger les scripts d'amorcage."
+}
+
+variable "bastion_admin_principal_ids" {
+  type        = set(string)
+  default     = []
+  description = "IDs Entra des administrateurs autorises a utiliser Bastion et a ouvrir une session admin sur les VM."
 }
 
 variable "scripts_base_url" {
