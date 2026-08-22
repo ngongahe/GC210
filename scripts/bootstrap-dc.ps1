@@ -9,6 +9,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+# 0. S'assurer d'un DNS resolvable pour telecharger (le DC n'est pas encore serveur DNS)
+Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue
+
 $dir = 'C:\GC210'
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 
@@ -33,10 +36,12 @@ $dsrm = ConvertTo-SecureString $DsrmPassword -AsPlainText -Force
 Install-ADDSForest -DomainName 'corp.local' -DomainNetbiosName 'CORP' `
   -InstallDns -SafeModeAdministratorPassword $dsrm -Force -NoRebootOnCompletion
 
-# 3. Tache de reprise apres redemarrage : configure les faiblesses annuaire
+# 3. Tache de reprise apres redemarrage : redirecteur DNS + faiblesses annuaire
 $resume = @'
 Set-Location C:\GC210
 try {
+  # Redirecteur DNS : permet au DC (et aux membres via le DC) de resoudre l'externe
+  Add-DnsServerForwarder -IPAddress 168.63.129.16 -ErrorAction SilentlyContinue
   .\01-DC01-Comptes-AD.ps1
   .\02-DC01-Affaiblir-LDAP.ps1
   .\00-Prerequis.ps1 -Task AuditSysmon
