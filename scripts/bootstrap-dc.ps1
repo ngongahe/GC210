@@ -17,12 +17,12 @@ New-Item -ItemType Directory -Force -Path $dir | Out-Null
 
 # 1. Telecharger les scripts DE01
 $expectedHashes = @{
-  'Lab-Config.ps1'            = 'bf28b637698b8de434eb8ccea0314aeec94b781c9eb1407c379224cf1f1e5c71'
-  '01-DC01-Comptes-AD.ps1'    = '63f6cf34361abae1498cd999567074cf888dc2152a1ea78f8dd776e3cf20cdfa'
-  '02-DC01-Affaiblir-LDAP.ps1' = '2056b9dfb516a320d5c5739179cefb368f040b8274bcaf7859733e19f3f81cf3'
-  '00-Prerequis.ps1'          = 'ce3009f6d3ca6c600e5add26bb0e51a4a3545b431acc2dcbdeab18ef2ba9a48a'
+  'Lab-Config.ps1'             = 'a0d31f76869473416d5c979f45ce8c34ad8d776815d06505128c136b1cde1f8e'
+  '01-DC01-Comptes-AD.ps1'     = '61775c2cc49b6d51f24cef9a89a7364a6f05a6f88161d476c6ed73b14abdc051'
+  '02-DC01-Affaiblir-LDAP.ps1' = '54529fa7c8e713ae305b5535dd1a2206a0cb8a45008cde6eae6a85bc9422eaa7'
+  '00-Prerequis.ps1'            = '20716da8630482f469dec0c48ff441559bd533ec684ac64bcb896bb8881e36ad'
   'Sysmon64.exe'              = 'a60aa845457406383277afdead35bd90c7804572b99901d239cc974841df2528'
-  'sysmonconfig.xml'          = '60b7b3950bd63b93ad8f6f275dce4bb932b09be16805d9dbf6cc34954a8699f2'
+  'sysmonconfig.xml'           = 'cf4012a6f8bfd6ac7c3780650171298534f7e228c8517791058baa5d7bdf3b66'
 }
 foreach ($f in 'Lab-Config.ps1','01-DC01-Comptes-AD.ps1','02-DC01-Affaiblir-LDAP.ps1','00-Prerequis.ps1', 'Sysmon64.exe', 'sysmonconfig.xml') {
   $destination = "$dir\$f"

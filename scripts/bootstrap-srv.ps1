@@ -19,11 +19,11 @@ do {
 if (-not $scriptsDns) { throw "Le nom $scriptsHost n'est pas resolvable dans le delai imparti." }
 
 $expectedHashes = @{
-  'Lab-Config.ps1'               = 'bf28b637698b8de434eb8ccea0314aeec94b781c9eb1407c379224cf1f1e5c71'
-  '03-SRV01-Web-Fichiers.ps1'    = 'ce1c9fdbfac84a62dcfd30fb72c2bc43784d9dbfafd0999a4ef4281c3ec0c98f'
-  '00-Prerequis.ps1'             = 'ce3009f6d3ca6c600e5add26bb0e51a4a3545b431acc2dcbdeab18ef2ba9a48a'
+  'Lab-Config.ps1'               = 'a0d31f76869473416d5c979f45ce8c34ad8d776815d06505128c136b1cde1f8e'
+  '03-SRV01-Web-Fichiers.ps1'    = '30e6b7e126b4eb40533e09426518c4a2b737086a1d69fbe024c1f35bf6535011'
+  '00-Prerequis.ps1'             = '20716da8630482f469dec0c48ff441559bd533ec684ac64bcb896bb8881e36ad'
   'Sysmon64.exe'                 = 'a60aa845457406383277afdead35bd90c7804572b99901d239cc974841df2528'
-  'sysmonconfig.xml'             = '60b7b3950bd63b93ad8f6f275dce4bb932b09be16805d9dbf6cc34954a8699f2'
+  'sysmonconfig.xml'             = 'cf4012a6f8bfd6ac7c3780650171298534f7e228c8517791058baa5d7bdf3b66'
 }
 foreach ($f in 'Lab-Config.ps1','03-SRV01-Web-Fichiers.ps1','00-Prerequis.ps1','Sysmon64.exe','sysmonconfig.xml') {
   $destination = "$dir\$f"
