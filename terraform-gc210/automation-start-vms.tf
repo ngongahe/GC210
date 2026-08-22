@@ -11,6 +11,7 @@
 
 variable "start_time" {
   type        = string
+  default     = "2026-08-26T17:00:00-04:00"
   description = "Premiere occurrence du demarrage (RFC3339, 17:00 heure locale, dans le futur). Ex : 2026-08-26T17:00:00-04:00"
 }
 
