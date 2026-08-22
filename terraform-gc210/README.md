@@ -29,15 +29,17 @@ export TF_VAR_dsrm_password='<mot-de-passe-dsrm>'
 terraform init
 terraform apply \
   -var="scripts_base_url=https://<host>/gc210-scripts" \
+  -var="nsg_hardened=false" \
   -var="allow_bootstrap_internet=true" \
   -var="enable_vpn=false" \
   -var="deploy_ws=true"
 ```
 
-Administrer ensuite les VM via **Azure Bastion**. Apres le telechargement des scripts, recreer un
-plan avec `allow_bootstrap_internet=false` puis l'appliquer pour fermer la sortie Internet.
-La valeur par defaut est deja `false`; l'ouverture HTTPS est uniquement temporaire et cible
-le tag de service `Internet` car NSG ne filtre pas les noms DNS GitHub.
+Administrer ensuite les VM via **Azure Bastion**. Le mode de montage (`nsg_hardened=false`) autorise
+temporairement P2S entrant et Internet sortant. Apres validation complete du laboratoire, recreer
+un plan avec `nsg_hardened=true` et `allow_bootstrap_internet=false`, puis l'appliquer pour activer
+les regles AD limitees et fermer la sortie Internet. L'ouverture HTTPS cible le tag de service
+`Internet` car NSG ne filtre pas les noms DNS GitHub.
 
 Fournir `bastion_admin_principal_ids` avec les IDs Entra des administrateurs autorises. Ils
 recoivent `Reader` sur Bastion et `Virtual Machine Administrator Login` sur le groupe de ressources.

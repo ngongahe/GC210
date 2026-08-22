@@ -33,6 +33,17 @@ foreach ($f in 'Lab-Config.ps1','01-DC01-Comptes-AD.ps1','02-DC01-Affaiblir-LDAP
 # Neutraliser le garde-fou interactif (automatisation)
 Add-Content "$dir\Lab-Config.ps1" "`nfunction Confirm-LabExecution { param([string]`$n) }"
 
+# Une mise a jour de l'extension peut relancer ce script sur un DC deja promu.
+$adDomain = $null
+try {
+  Import-Module ActiveDirectory -ErrorAction Stop
+  $adDomain = Get-ADDomain -ErrorAction Stop
+} catch {}
+if ($adDomain -and $adDomain.DNSRoot -ieq 'corp.local') {
+  Write-Output 'DC01 est deja promu; aucune nouvelle promotion ne sera lancee.'
+  exit 0
+}
+
 # 2. Promotion de la foret (non interactive, sans redemarrage immediat)
 Install-WindowsFeature AD-Domain-Services, DNS -IncludeManagementTools | Out-Null
 Import-Module ADDSDeployment

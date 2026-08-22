@@ -113,6 +113,12 @@ variable "deploy_ws" {
   description = "Deployer WS01 (poste foothold). Optionnel en modele mutualise."
 }
 
+variable "nsg_hardened" {
+  type        = bool
+  default     = false
+  description = "Activer la NSG durcie apres validation complete du laboratoire."
+}
+
 variable "allow_bootstrap_internet" {
   type        = bool
   default     = false

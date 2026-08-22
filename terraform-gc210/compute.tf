@@ -76,7 +76,7 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
   auto_upgrade_minor_version = true
 
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-dc.ps1).Hash.ToLower() -ne 'e0de40b354f8334582d1029f3271bee26d7f8042d7861b29a15a59e166b00eb0') { throw 'Hash SHA-256 invalide pour bootstrap-dc.ps1.' }; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DsrmPassword '${var.dsrm_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses 168.63.129.16; Start-Sleep 3; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-dc.ps1).Hash.ToLower() -ne 'cd859bb1c6e5e448e1d4093f9bf8980d3bdcfcbe3c5f5645b87255c4de25edae') { throw 'Hash SHA-256 invalide pour bootstrap-dc.ps1.' }; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DsrmPassword '${var.dsrm_password}'\""
 
   })
 }
@@ -138,7 +138,7 @@ resource "azurerm_virtual_machine_extension" "srv_bootstrap" {
   type_handler_version       = local.ext_version
   auto_upgrade_minor_version = true
   # S'assurer que le DC est promu/configure avant la jonction.
-  depends_on                 = [azurerm_virtual_machine_extension.dc_bootstrap]
+  depends_on = [azurerm_virtual_machine_extension.dc_bootstrap]
 
   # protected_settings : masque la commande et le mot de passe de jonction.
   protected_settings = jsonencode({
@@ -214,10 +214,10 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
 }
 
 # ---------------- Sorties ----------------
-output "dc_private_ip"  { value = var.ip_dc }
+output "dc_private_ip" { value = var.ip_dc }
 output "srv_private_ip" { value = var.ip_srv }
-output "ws_private_ip"  { value = var.deploy_ws ? var.ip_ws : "non deploye" }
-output "bastion_name"   { value = azurerm_bastion_host.bastion.name }
+output "ws_private_ip" { value = var.deploy_ws ? var.ip_ws : "non deploye" }
+output "bastion_name" { value = azurerm_bastion_host.bastion.name }
 output "note" {
   value = "Administrer via Bastion. Activer 'deny-internet-out' apres montage. Ne pas exposer a Internet."
 }

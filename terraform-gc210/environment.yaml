@@ -30,6 +30,11 @@ parameters:
     type: boolean
     required: false
     default: true
+  - id: nsg_hardened
+    name: Activer la NSG durcie apres validation du laboratoire
+    type: boolean
+    required: false
+    default: false
   - id: local_admin_password
     name: Mot de passe administrateur local
     type: string

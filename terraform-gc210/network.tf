@@ -45,40 +45,64 @@ resource "azurerm_network_security_group" "lab" {
   resource_group_name = azurerm_resource_group.lab.name
   tags                = var.tags
 
-  security_rule {
-    name                       = "allow-p2s-dns-udp"
-    priority                   = 200
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Udp"
-    source_address_prefix      = var.p2s_pool
-    source_port_range          = "*"
-    destination_address_prefix = var.addr_lab
-    destination_port_range     = "53"
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [] : [1]
+    content {
+      name                       = "allow-students-p2s"
+      priority                   = 200
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_address_prefix      = var.p2s_pool
+      source_port_range          = "*"
+      destination_address_prefix = var.addr_lab
+      destination_port_range     = "*"
+    }
   }
 
-  security_rule {
-    name                       = "allow-p2s-dns-tcp"
-    priority                   = 201
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_address_prefix      = var.p2s_pool
-    source_port_range          = "*"
-    destination_address_prefix = var.addr_lab
-    destination_port_range     = "53"
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-p2s-dns-udp"
+      priority                   = 200
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Udp"
+      source_address_prefix      = var.p2s_pool
+      source_port_range          = "*"
+      destination_address_prefix = var.addr_lab
+      destination_port_range     = "53"
+    }
   }
 
-  security_rule {
-    name                       = "allow-p2s-admin-ad"
-    priority                   = 210
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_address_prefix      = var.p2s_pool
-    source_port_range          = "*"
-    destination_address_prefix = var.addr_lab
-    destination_port_ranges    = ["88", "135", "389", "445", "464", "636", "3268", "3269", "3389", "5985", "5986", "49152-65535"]
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-p2s-dns-tcp"
+      priority                   = 201
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_address_prefix      = var.p2s_pool
+      source_port_range          = "*"
+      destination_address_prefix = var.addr_lab
+      destination_port_range     = "53"
+    }
+  }
+
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-p2s-admin-ad"
+      priority                   = 210
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_address_prefix      = var.p2s_pool
+      source_port_range          = "*"
+      destination_address_prefix = var.addr_lab
+      destination_port_ranges    = ["88", "135", "389", "445", "464", "636", "3268", "3269", "3389", "5985", "5986", "49152-65535"]
+    }
   }
 
   security_rule {
@@ -118,7 +142,7 @@ resource "azurerm_network_security_group" "lab" {
   }
 
   dynamic "security_rule" {
-    for_each = var.allow_bootstrap_internet ? [1] : []
+    for_each = var.nsg_hardened && var.allow_bootstrap_internet ? [1] : []
     content {
       name                       = "allow-bootstrap-https"
       priority                   = 120
@@ -132,16 +156,34 @@ resource "azurerm_network_security_group" "lab" {
     }
   }
 
-  security_rule {
-    name                       = "deny-internet-out"
-    priority                   = 4096
-    direction                  = "Outbound"
-    access                     = "Deny"
-    protocol                   = "*"
-    source_address_prefix      = "*"
-    source_port_range          = "*"
-    destination_address_prefix = "Internet"
-    destination_port_range     = "*"
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "deny-internet-out"
+      priority                   = 4096
+      direction                  = "Outbound"
+      access                     = "Deny"
+      protocol                   = "*"
+      source_address_prefix      = "*"
+      source_port_range          = "*"
+      destination_address_prefix = "Internet"
+      destination_port_range     = "*"
+    }
+  }
+
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [] : [1]
+    content {
+      name                       = "deny-internet-out"
+      priority                   = 4096
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_address_prefix      = "*"
+      source_port_range          = "*"
+      destination_address_prefix = "Internet"
+      destination_port_range     = "*"
+    }
   }
 }
 
@@ -161,17 +203,17 @@ resource "azurerm_public_ip" "bastion" {
 }
 
 resource "azurerm_bastion_host" "bastion" {
-  name                = "bastion-gc210"
-  location            = azurerm_resource_group.lab.location
-  resource_group_name = azurerm_resource_group.lab.name
-  sku                 = "Standard"
-  copy_paste_enabled  = false
-  file_copy_enabled   = false
-  ip_connect_enabled  = false
-  kerberos_enabled     = true
+  name                   = "bastion-gc210"
+  location               = azurerm_resource_group.lab.location
+  resource_group_name    = azurerm_resource_group.lab.name
+  sku                    = "Standard"
+  copy_paste_enabled     = false
+  file_copy_enabled      = false
+  ip_connect_enabled     = false
+  kerberos_enabled       = true
   shareable_link_enabled = false
-  tunneling_enabled   = false
-  tags                = var.tags
+  tunneling_enabled      = false
+  tags                   = var.tags
 
   ip_configuration {
     name                 = "config"
