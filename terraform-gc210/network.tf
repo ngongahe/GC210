@@ -171,20 +171,6 @@ resource "azurerm_network_security_group" "lab" {
     }
   }
 
-  dynamic "security_rule" {
-    for_each = var.nsg_hardened ? [] : [1]
-    content {
-      name                       = "allow-internet-out"
-      priority                   = 4096
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "*"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-      destination_address_prefix = "Internet"
-      destination_port_range     = "*"
-    }
-  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "lab" {

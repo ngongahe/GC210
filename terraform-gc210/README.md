@@ -30,13 +30,13 @@ terraform init
 terraform apply \
   -var="scripts_base_url=https://<host>/gc210-scripts" \
   -var="nsg_hardened=false" \
-  -var="allow_bootstrap_internet=true" \
   -var="enable_vpn=false" \
   -var="deploy_ws=true"
 ```
 
 Administrer ensuite les VM via **Azure Bastion**. Le mode de montage (`nsg_hardened=false`) autorise
-temporairement P2S entrant et Internet sortant. Apres validation complete du laboratoire, recreer
+temporairement P2S entrant et Internet sortant (la sortie est permise par defaut en l'absence de
+regle `Deny`). Apres validation complete du laboratoire, recreer
 un plan avec `nsg_hardened=true` et `allow_bootstrap_internet=false`, puis l'appliquer pour activer
 les regles AD limitees et fermer la sortie Internet. L'ouverture HTTPS cible le tag de service
 `Internet` car NSG ne filtre pas les noms DNS GitHub.
