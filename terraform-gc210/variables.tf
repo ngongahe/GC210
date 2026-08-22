@@ -133,8 +133,8 @@ variable "bastion_admin_principal_ids" {
 
 variable "scripts_base_url" {
   type        = string
-  default     = "https://raw.githubusercontent.com/ngongahe/GC210/main/scripts"
-  description = "URL de base (raw GitHub ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
+  default     = "https://raw.githubusercontent.com/ngongahe/GC210/71e667df3433861c33c8190f7b119fb4d1430f3f/scripts"
+  description = "URL immuable de base (commit Git ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
 }
 
 variable "image" {
