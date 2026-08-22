@@ -18,13 +18,11 @@ if (-not (Test-Path $SysmonFolder)) { New-Item -ItemType Directory -Path $Sysmon
 Invoke-WebRequest -UseBasicParsing -Uri "$ScriptsBaseUrl/Sysmon64.exe" -OutFile (Join-Path $SysmonFolder "Sysmon64.exe")
 Invoke-WebRequest -UseBasicParsing -Uri "$ScriptsBaseUrl/sysmonconfig.xml" -OutFile (Join-Path $SysmonFolder "sysmonconfig.xml")
 
-# Extraction des fichiers
-Expand-Archive -Path "$SysmonFolder\Sysmon.zip" -DestinationPath $SysmonFolder -Force
-
+# Le binaire est telecharge tel quel (pas d'archive) : aucune extraction requise.
 
 # Installation du service Sysmon64 (Windows 11 utilise l'architecture 64-bit nativement)
 #Write-Output "Installation du service Sysmon..."
-#Start-Process -FilePath "$SysmonFolder\Sysmon64.exe" -ArgumentList "-i $SysmonFolder\sysmon-config.xml -accepteula" -Wait -NoNewWindow
+#& "$SysmonFolder\Sysmon64.exe" -accepteula -i "$SysmonFolder\sysmonconfig.xml"
 
 # --- 2. JOINDRE LA MACHINE AU DOMAIN ---
 
