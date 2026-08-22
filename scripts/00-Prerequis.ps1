@@ -5,13 +5,13 @@
     Execute par tache (-Task) selon la machine :
       DcPromo     : sur la future DC01 (promotion de la foret corp.local)  -> redemarre
       JoinDomain  : sur SRV01 et WS01 (jonction au domaine)                -> redemarre
-      AuditSysmon : sur DC01 et SRV01 (audit avance + ligne de commande 4688 + Sysmon)
+      AuditSysmon : sur DC01, SRV01 et WS01 (audit avance + ligne de commande 4688 + Sysmon)
     Environnement volontairement vulnerable - laboratoire ISOLE uniquement.
 
     Exemples :
       .\00-Prerequis.ps1 -Task DcPromo       # sur la future DC01
       .\00-Prerequis.ps1 -Task JoinDomain    # sur SRV01, puis sur WS01
-      .\00-Prerequis.ps1 -Task AuditSysmon   # sur DC01, puis sur SRV01
+      .\00-Prerequis.ps1 -Task AuditSysmon   # sur DC01, SRV01, puis sur WS01
 #>
 
 #Requires -RunAsAdministrator
