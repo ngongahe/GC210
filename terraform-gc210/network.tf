@@ -189,9 +189,9 @@ resource "azurerm_virtual_network_gateway" "vpngw" {
     address_space        = [var.p2s_pool]
     vpn_client_protocols = ["OpenVPN"]
     # Certificat racine : coller la donnee base64 (voir gen-vpn-certs.sh).
-    # root_certificate {
-    #   name             = "GC210-Root"
-    #   public_cert_data = file("${path.module}/caCert_base64.txt")
-    # }
+    root_certificate {
+       name             = "GC210-Root"
+       public_cert_data = file("${path.module}/caCert_base64.txt")
+     }
   }
 }

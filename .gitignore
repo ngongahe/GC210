@@ -29,6 +29,7 @@ caCert_base64.txt
 # === Divers ===
 crash.log
 crash.*.log
+autres/*
 
 # Remarque : ce motif ignore aussi les certificats PUBLICS (*.pem) par prudence.
 # Les certificats se regenerent via gen-vpn-certs.sh ; assouplir si besoin.
