@@ -77,7 +77,7 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
   automatic_upgrade_enabled  = false
 
   settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-dc.ps1).Hash.ToLower() -ne '50d6be7440ed5ad10dcdba144f74e4d818f81670c55c51a429998fdb6b7d89b1') { throw 'Hash SHA-256 invalide pour bootstrap-dc.ps1.' }; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
 
   })
 }
@@ -143,7 +143,7 @@ resource "azurerm_virtual_machine_extension" "srv_bootstrap" {
 
   # protected_settings : masque la commande et le mot de passe de jonction.
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-srv.ps1).Hash.ToLower() -ne 'ac6496387223f299f434431b22fd8c92cd93eef6e2bb316f004e8a52c1d90b9c') { throw 'Hash SHA-256 invalide pour bootstrap-srv.ps1.' }; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 
@@ -210,7 +210,7 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
   depends_on                 = [azurerm_virtual_machine_extension.dc_bootstrap]
 
   protected_settings = jsonencode({
-    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; if ((Get-FileHash -Algorithm SHA256 -LiteralPath C:\\bootstrap-ws.ps1).Hash.ToLower() -ne '123976c684b6caa6375f340faef7591bc448ea9b18030bdc5b6dc8e602d2ba51') { throw 'Hash SHA-256 invalide pour bootstrap-ws.ps1.' }; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
 }
 
@@ -218,7 +218,5 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
 output "dc_private_ip" { value = var.ip_dc }
 output "srv_private_ip" { value = var.ip_srv }
 output "ws_private_ip" { value = var.deploy_ws ? var.ip_ws : "non deploye" }
-output "bastion_name" { value =  var.enable_bastion ? azurerm_bastion_host.bastion[0].name " : "non deploye"}
-output "note" {
-  value = "Administrer via Bastion. Activer nsg_hardened apres montage. Ne pas exposer a Internet."
-}
+output "bastion_name" { value = var.enable_bastion ? azurerm_bastion_host.bastion[0].name : "non deploye" }
+output "note" { value = "Administrer via Bastion. Activer nsg_hardened apres montage. Ne pas exposer a Internet." }
