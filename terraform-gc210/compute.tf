@@ -7,10 +7,9 @@
 #   - WS01 : jonction (00 JoinDomain)
 # L'ordonnancement (DC avant membres) est assure par depends_on.
 #
-# NOTE PROVISIONING : la promotion AD implique des redemarrages ; l'extension
-# Custom Script gere un seul flux. Pour une robustesse maximale (redemarrages,
-# reprise), envisager Ansible/WinRM (patron Adaz/GOAD) ou DSC. Le present socle
-# convient a un montage supervise ; valider le premier deploiement.
+# NOTE : les extensions d'amorcage sont "one-shot" (lifecycle ignore_changes = all)
+# afin de ne JAMAIS etre rejouees sur un environnement deja monte. Le code reste la
+# reference pour un redeploiement "a froid" (execution unique a la creation).
 
 locals {
   ext_publisher = "Microsoft.Compute"
@@ -78,8 +77,12 @@ resource "azurerm_virtual_machine_extension" "dc_bootstrap" {
 
   settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-dc.ps1' -OutFile C:\\bootstrap-dc.ps1; & C:\\bootstrap-dc.ps1 -ScriptsBaseUrl '${var.scripts_base_url}'\""
-
   })
+
+  # Amorcage one-shot : ne jamais rejouer sur un DC deja promu.
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # ---------------- SRV01 ----------------
@@ -145,6 +148,11 @@ resource "azurerm_virtual_machine_extension" "srv_bootstrap" {
   protected_settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-srv.ps1' -OutFile C:\\bootstrap-srv.ps1; & C:\\bootstrap-srv.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
+
+  # Amorcage one-shot : ne jamais rejouer sur un membre deja joint/configure.
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # ---------------- WS01 (optionnel) ----------------
@@ -212,6 +220,11 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
   protected_settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws.ps1' -OutFile C:\\bootstrap-ws.ps1; & C:\\bootstrap-ws.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
   })
+
+  # Amorcage one-shot : ne jamais rejouer sur un membre deja joint/configure.
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # ---------------- Sorties ----------------
