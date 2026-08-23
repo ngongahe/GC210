@@ -65,7 +65,7 @@ variable "addr_gw" {
 
 variable "p2s_pool" {
   type    = string
-  default = "172.16.0.0/24"
+  default = "172.16.0.0/23"
 }
 
 # --- IP statiques des cibles ---
