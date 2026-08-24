@@ -127,7 +127,7 @@ variable "deploy_ws" {
 
 variable "deploy_ws2" {
   type        = bool
-  default     = false
+  default     = true  # WS02 EST deploye
   description = "Deployer WS02 (poste de DEMO du cours, independant du lab du Devoir)."
 }
 
