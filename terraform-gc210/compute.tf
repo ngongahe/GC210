@@ -227,6 +227,76 @@ resource "azurerm_virtual_machine_extension" "ws_bootstrap" {
   }
 }
 
+# ---------------- WS02 (DEMO du cours - optionnel, independant du Devoir) ----------------
+resource "azurerm_network_interface" "ws2" {
+  count               = var.deploy_ws2 ? 1 : 0
+  name                = "nic-ws02"
+  location            = azurerm_resource_group.lab.location
+  resource_group_name = azurerm_resource_group.lab.name
+  tags                = var.tags
+  ip_configuration {
+    name                          = "ipconfig"
+    subnet_id                     = azurerm_subnet.lab.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.ip_ws2
+  }
+}
+
+resource "azurerm_windows_virtual_machine" "ws2" {
+  count                 = var.deploy_ws2 ? 1 : 0
+  name                  = "WS02"
+  computer_name         = "WS02"
+  resource_group_name   = azurerm_resource_group.lab.name
+  location              = azurerm_resource_group.lab.location
+  size                  = var.size_ws2
+  admin_username        = var.local_admin_username
+  admin_password        = var.local_admin_password
+  network_interface_ids = [azurerm_network_interface.ws2[0].id]
+  tags                  = var.tags
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "StandardSSD_LRS"
+  }
+  source_image_reference {
+    publisher = var.image.publisher
+    offer     = var.image.offer
+    sku       = var.image.sku
+    version   = var.image.version
+  }
+}
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "ws2" {
+  count                 = var.deploy_ws2 ? 1 : 0
+  virtual_machine_id    = azurerm_windows_virtual_machine.ws2[0].id
+  location              = azurerm_resource_group.lab.location
+  enabled               = true
+  daily_recurrence_time = "0100"
+  timezone              = "Eastern Standard Time"
+  notification_settings {
+    enabled = false
+  }
+}
+
+resource "azurerm_virtual_machine_extension" "ws2_bootstrap" {
+  count                      = var.deploy_ws2 ? 1 : 0
+  name                       = "bootstrap-ws2"
+  virtual_machine_id         = azurerm_windows_virtual_machine.ws2[0].id
+  publisher                  = local.ext_publisher
+  type                       = local.ext_type
+  type_handler_version       = local.ext_version
+  auto_upgrade_minor_version = true
+  depends_on                 = [azurerm_virtual_machine_extension.dc_bootstrap]
+
+  protected_settings = jsonencode({
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses 168.63.129.16 -ErrorAction SilentlyContinue }; Start-Sleep 10; Invoke-WebRequest -UseBasicParsing '${var.scripts_base_url}/bootstrap-ws2.ps1' -OutFile C:\\bootstrap-ws2.ps1; & C:\\bootstrap-ws2.ps1 -ScriptsBaseUrl '${var.scripts_base_url}' -DomainJoinUsername '${var.domain_join_username}' -DomainPassword '${var.domain_join_password}'\""
+  })
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
 # ---------------- Sorties ----------------
 output "dc_private_ip" { value = var.ip_dc }
 output "srv_private_ip" { value = var.ip_srv }
