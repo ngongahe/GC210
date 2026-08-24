@@ -104,6 +104,70 @@ resource "azurerm_network_security_group" "lab" {
       destination_port_ranges    = ["88", "135", "389", "445", "464", "636", "3268", "3269", "3389", "5985", "5986", "49152-65535"]
     }
   }
+
+  # --- Mode durci : acces web etudiant (SRV01 IIS) ---
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-p2s-web"
+      priority                   = 220
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_address_prefix      = var.p2s_pool
+      source_port_range          = "*"
+      destination_address_prefix = var.addr_lab
+      destination_port_ranges    = ["80", "443"]
+    }
+  }
+
+  # --- Mode durci : sortie autorisee vers le VNet (trafic intra-labo) ---
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-out-vnet"
+      priority                   = 100
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_address_prefix      = var.addr_lab
+      source_port_range          = "*"
+      destination_address_prefix = "VirtualNetwork"
+      destination_port_range     = "*"
+    }
+  }
+
+  # --- Mode durci : sortie autorisee vers le DNS plateforme Azure (168.63.129.16) ---
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "allow-out-platform-dns"
+      priority                   = 110
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_address_prefix      = var.addr_lab
+      source_port_range          = "*"
+      destination_address_prefix = "AzurePlatformDNS"
+      destination_port_range     = "*"
+    }
+  }
+
+  # --- Mode durci : ISOLATION - deny sortant vers Internet ---
+  dynamic "security_rule" {
+    for_each = var.nsg_hardened ? [1] : []
+    content {
+      name                       = "deny-internet-out"
+      priority                   = 4000
+      direction                  = "Outbound"
+      access                     = "Deny"
+      protocol                   = "*"
+      source_address_prefix      = var.addr_lab
+      source_port_range          = "*"
+      destination_address_prefix = "Internet"
+      destination_port_range     = "*"
+    }
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "lab" {
