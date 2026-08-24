@@ -25,7 +25,7 @@ Import-Module GroupPolicy
 $Domain    = 'corp.local'
 $DomainDN  = 'DC=corp,DC=local'
 $SprayPwd  = 'Hiver2026!'                       # cohorte password spraying
-$HelpdeskPwd = 'Helpdesk-Demo_2026'             # compte helpdesk (PtH)
+$HelpdeskPwd = 'P@ssword1!'             # compte helpdesk (PtH)
 $GppPlain  = 'Wintel-Demo_Local2026'            # secret expose via GPP cpassword
 
 function Log($s,$m){ Write-Host ("[{0}] {1}" -f $s,$m) }
