@@ -111,16 +111,17 @@ variable "size_ws2" {
   default = "Standard_D2as_v6"
 }
 
-# --- Options ---
+# --- Options (n'ajoutez -var que pour ce que vous voulez changer ---
+# --- les valeurs par défauts reflètent l'état réel déployé) ---
 variable "enable_vpn" {
   type        = bool
-  default     = false
+  default     = true  # la passerelle EST deployee
   description = "Deployer la passerelle VPN P2S (long ~30-45 min)."
 }
 
 variable "deploy_ws" {
   type        = bool
-  default     = true
+  default     = true  # WS01 EST deploye
   description = "Deployer WS01 (poste foothold). Optionnel en modele mutualise."
 }
 
