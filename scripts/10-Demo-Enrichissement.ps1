@@ -25,7 +25,7 @@ Import-Module GroupPolicy
 $Domain    = 'corp.local'
 $DomainDN  = 'DC=corp,DC=local'
 $SprayPwd  = 'Hiver2026!'                       # cohorte password spraying
-$HelpdeskPwd = 'P@ssword1!'                 # helpdesk (PtH) : conforme, SANS fragment de nom, crackable rockyou+regles
+$HelpdeskPwd = 'Welcome2024!'                 # helpdesk (PtH) : conforme, SANS fragment de nom, crackable rockyou+regles
 $GppPlain  = 'Wintel-Demo_Local2026'            # secret expose via GPP cpassword
 
 function Log($s,$m){ Write-Host ("[{0}] {1}" -f $s,$m) }
@@ -142,9 +142,15 @@ foreach($g in $groups){
   else { New-ADGroup -Name $g -GroupScope Global -GroupCategory Security -Path $demo -Description "Groupe de demo"; Log '+' "Groupe cree : $g" }
 }
 # Chaine imbriquee : N1 -> Admins -> Managers (BloodHound shortest path)
-Add-ADGroupMember -Identity 'GG_Helpdesk_Admins'   -Members 'GG_Helpdesk_N1'      -EA SilentlyContinue
-Add-ADGroupMember -Identity 'GG_Helpdesk_Managers' -Members 'GG_Helpdesk_Admins'  -EA SilentlyContinue
-Log '+' "Imbrication : GG_Helpdesk_N1 -> Admins -> Managers"
+function Add-Nested($grp,$member,$isUser){
+  try {
+    $mObj = if($isUser){ Get-ADUser $member } else { Get-ADGroup $member }
+    if(Get-ADGroupMember -Identity $grp | Where-Object { $_.Name -eq $member }){ Log '=' "$member deja dans $grp" }
+    else { Add-ADGroupMember -Identity (Get-ADGroup $grp) -Members $mObj -ErrorAction Stop; Log '+' "$member -> $grp" }
+  } catch { Log '!' "Nesting $member -> $grp : $($_.Exception.Message)" }
+}
+Add-Nested 'GG_Helpdesk_Admins'   'GG_Helpdesk_N1'     $false
+Add-Nested 'GG_Helpdesk_Managers' 'GG_Helpdesk_Admins' $false
 
 # Compte helpdesk (cible PtH) : membre de N1 (herite du chemin)
 if(-not (Get-ADUser -Filter "SamAccountName -eq 'helpdesk'" -EA SilentlyContinue)){
@@ -153,7 +159,7 @@ if(-not (Get-ADUser -Filter "SamAccountName -eq 'helpdesk'" -EA SilentlyContinue
     -Enabled $true -PasswordNeverExpires $true -Path $ouSvc -Description "Support helpdesk (demo PtH)"
   Log '+' "Compte helpdesk cree"
 } else { Log '=' "Compte helpdesk existe" }
-Add-ADGroupMember -Identity 'GG_Helpdesk_N1' -Members 'helpdesk' -EA SilentlyContinue
+Add-Nested 'GG_Helpdesk_N1' 'helpdesk' $true
 
 # ============================================================
 # 6. Ordinateurs fictifs (15) + deplacement de WS02
