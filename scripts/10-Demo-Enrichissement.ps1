@@ -25,7 +25,7 @@ Import-Module GroupPolicy
 $Domain    = 'corp.local'
 $DomainDN  = 'DC=corp,DC=local'
 $SprayPwd  = 'Hiver2026!'                       # cohorte password spraying
-$HelpdeskPwd = 'P@ssword1!'             # compte helpdesk (PtH)
+$HelpdeskPwd = 'P@ssword1!'                 # helpdesk (PtH) : conforme, SANS fragment de nom, crackable rockyou+regles
 $GppPlain  = 'Wintel-Demo_Local2026'            # secret expose via GPP cpassword
 
 function Log($s,$m){ Write-Host ("[{0}] {1}" -f $s,$m) }
@@ -85,6 +85,7 @@ for($i=0;$i -lt 50;$i++){
   if($i -lt 3){                      # 3 secrets exposes dans description (T1552)
     $leak = "Zeph!r$($i)Cascade2026"
     $desc = "$title $dept - MDP temporaire (a changer): $leak"
+    $pwd  = $leak                    # le secret DECRIT est le vrai mot de passe
   } elseif($i -ge 3 -and $i -lt 21){ # 18 users : cohorte spraying (T1110.003)
     $pwd = $SprayPwd
   }
