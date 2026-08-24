@@ -133,7 +133,7 @@ variable "deploy_ws2" {
 
 variable "nsg_hardened" {
   type        = bool
-  default     = false
+  default     = true # hardening EST deploye
   description = "Activer la NSG durcie apres validation complete du laboratoire."
 }
 
@@ -156,7 +156,7 @@ variable "enable_bastion" {
 
 variable "scripts_base_url" {
   type        = string
-  default     = "https://raw.githubusercontent.com/ngongahe/GC210/main/scripts"
+  default     = "https://raw.githubusercontent.com/ngongahe/GC210/233c9bb9d7d2b89f6646df2ce46eb958321001d6/scripts"
   description = "URL immuable de base (commit Git ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
 }
 
