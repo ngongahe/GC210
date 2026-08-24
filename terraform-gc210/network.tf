@@ -148,7 +148,7 @@ resource "azurerm_network_security_group" "lab" {
       protocol                   = "*"
       source_address_prefix      = var.addr_lab
       source_port_range          = "*"
-      destination_address_prefix = "AzurePlatformDNS"
+      destination_address_prefix = "168.63.129.16"
       destination_port_range     = "*"
     }
   }
