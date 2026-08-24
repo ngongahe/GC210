@@ -165,7 +165,6 @@ resource "azurerm_public_ip" "vpngw" {
   resource_group_name = azurerm_resource_group.lab.name
   allocation_method   = "Static"
   sku                 = "Standard"
-  zones               = ["1", "2", "3"]   # zone-redundant, requis par VpnGw1AZ
   tags                = var.tags
 }
 

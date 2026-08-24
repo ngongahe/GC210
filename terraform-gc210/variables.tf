@@ -12,6 +12,8 @@ variable "rg_name" {
   description = "Groupe de ressources."
 }
 
+# --- Mot de passe ---
+
 variable "local_admin_username" {
   type        = string
   default     = "azadmin"
@@ -84,6 +86,11 @@ variable "ip_ws" {
   default = "10.10.10.30"
 }
 
+variable "ip_ws2" {
+  type    = string
+  default = "10.10.10.31"
+}
+
 # --- Tailles de VM (mutualise : DC/SRV en B4ms pour l'usage concurrent) ---
 variable "size_dc" {
   type    = string
@@ -99,6 +106,10 @@ variable "size_ws" {
   type    = string
   default = "Standard_D2as_v6"
 }
+variable "size_ws2" {
+  type    = string
+  default = "Standard_D2as_v6"
+}
 
 # --- Options ---
 variable "enable_vpn" {
@@ -111,6 +122,12 @@ variable "deploy_ws" {
   type        = bool
   default     = true
   description = "Deployer WS01 (poste foothold). Optionnel en modele mutualise."
+}
+
+variable "deploy_ws2" {
+  type        = bool
+  default     = false
+  description = "Deployer WS02 (poste de DEMO du cours, independant du lab du Devoir)."
 }
 
 variable "nsg_hardened" {
@@ -138,7 +155,7 @@ variable "enable_bastion" {
 
 variable "scripts_base_url" {
   type        = string
-  default     = "https://raw.githubusercontent.com/ngongahe/GC210/71e667df3433861c33c8190f7b119fb4d1430f3f/scripts"
+  default     = "https://raw.githubusercontent.com/ngongahe/GC210/main/scripts"
   description = "URL immuable de base (commit Git ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
 }
 
@@ -166,3 +183,4 @@ variable "tags" {
     ne_pas_exposer = "internet"
   }
 }
+
