@@ -49,9 +49,9 @@ Check "gMSA lecture par Domain Users (trop large)" {
 # --- Groupes + imbrication + helpdesk ---
 $grpCount = (Get-ADGroup -Filter "Name -like 'GG_*'" -SearchBase $demoDN).Count
 Info "Groupes GG_* sous _GC210_Demo" { $grpCount }
-Check "Chaine N1 -> Admins" { (Get-ADGroupMember 'GG_Helpdesk_Admins' | Where-Object Name -eq 'GG_Helpdesk_N1').Count -ge 1 }
-Check "Chaine Admins -> Managers" { (Get-ADGroupMember 'GG_Helpdesk_Managers' | Where-Object Name -eq 'GG_Helpdesk_Admins').Count -ge 1 }
-Check "helpdesk membre de GG_Helpdesk_N1" { (Get-ADGroupMember 'GG_Helpdesk_N1' | Where-Object Name -eq 'helpdesk').Count -ge 1 }
+Check "Chaine N1 -> Admins" { @(Get-ADGroupMember 'GG_Helpdesk_Admins' | Where-Object { $_.SamAccountName -eq 'GG_Helpdesk_N1' }).Count -ge 1 }
+Check "Chaine Admins -> Managers" { @(Get-ADGroupMember 'GG_Helpdesk_Managers' | Where-Object { $_.SamAccountName -eq 'GG_Helpdesk_Admins' }).Count -ge 1 }
+Check "helpdesk membre de GG_Helpdesk_N1" { @(Get-ADGroupMember 'GG_Helpdesk_N1' | Where-Object { $_.SamAccountName -eq 'helpdesk' }).Count -ge 1 }
 
 # --- Ordinateurs + WS02 ---
 Check "15 ordinateurs fictifs WK-DEMO-*" { (Get-ADComputer -Filter "Name -like 'WK-DEMO-*'").Count -ge 15 }
