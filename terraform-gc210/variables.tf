@@ -156,7 +156,7 @@ variable "enable_bastion" {
 
 variable "scripts_base_url" {
   type        = string
-  default     = "https://raw.githubusercontent.com/ngongahe/GC210/233c9bb9d7d2b89f6646df2ce46eb958321001d6/scripts"
+  default     = "https://raw.githubusercontent.com/ngongahe/GC210/587e0c685381ef59872075023f5095d8b510f9c4/scripts"
   description = "URL immuable de base (commit Git ou stockage SAS) hebergeant bootstrap-*.ps1 et les scripts DE01."
 }
 
