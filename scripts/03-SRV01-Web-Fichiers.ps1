@@ -64,11 +64,16 @@ $webconfig = @"
 Set-Content -Path 'C:\Shares\WebBackup\web.config' -Value $webconfig -Encoding UTF8
 Write-Host "[+ ] web.config plante dans \\$SRV\WebBackup (mot de passe svc_web expose)" -ForegroundColor Green
 
-# --- 5. svc_web administrateur local de SRV01 ------------------------------
+# --- 5. svc_web et adm_files administrateur local de SRV01 ------------------------------
 try {
     Add-LocalGroupMember -Group 'Administrators' -Member "$LabDomainNB\svc_web" -ErrorAction Stop
     Write-Host "[+ ] svc_web ajoute aux administrateurs locaux de SRV01" -ForegroundColor Green
 } catch { Write-Host "[= ] svc_web deja admin local (ou erreur benigne)" -ForegroundColor DarkGray }
+
+try {
+    Add-LocalGroupMember -Group 'Administrators' -Member "$LabDomainNB\adm_files" -ErrorAction Stop
+    Write-Host "[+ ] adm_files ajoute aux administrateurs locaux de SRV01" -ForegroundColor Green
+} catch { Write-Host "[= ] adm_files deja admin local (ou erreur benigne)" -ForegroundColor DarkGray }
 
 # --- 6. Session periodique de adm_files (option 5) -------------------------
 #   Tache planifiee executee sous adm_files -> identifiants/tickets en memoire.
